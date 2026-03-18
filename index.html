@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reis Family — Celebration Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --robin-color: #EC4899;
+            --robin-light: #FCE7F3;
+            --robin-glow: rgba(236, 72, 153, 0.15);
+            --katherine-color: #8B5CF6;
+            --katherine-light: #EDE9FE;
+            --katherine-glow: rgba(139, 92, 246, 0.15);
+            --jack-color: #3B82F6;
+            --jack-light: #DBEAFE;
+            --jack-glow: rgba(59, 130, 246, 0.15);
+            --sandy-color: #F59E0B;
+            --sandy-light: #FEF3C7;
+            --sandy-glow: rgba(245, 158, 11, 0.15);
+            --family-color: #10B981;
+            --family-light: #D1FAE5;
+            --family-glow: rgba(16, 185, 129, 0.15);
+
+            --bg-cream: #FFF9F5;
+            --bg-warm: #FFF5EE;
+            --card-bg: #FFFFFF;
+            --text-primary: #1F1711;
+            --text-secondary: #6B5B4F;
+            --text-muted: #A89585;
+            --border-soft: rgba(168, 149, 133, 0.15);
+            --shadow-soft: 0 2px 16px rgba(31, 23, 17, 0.06);
+            --shadow-lifted: 0 8px 32px rgba(31, 23, 17, 0.1);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* === PASSWORD SCREEN === */
+        .password-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FCE7F3 0%, #FFF5EE 40%, #EDE9FE 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 12s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .password-screen.hidden {
+            display: none;
+        }
+
+        .password-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 30%, var(--robin-glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, var(--katherine-glow) 0%, transparent 50%),
+                radial-gradient(circle at 50% 90%, var(--sandy-glow) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .password-box {
+            position: relative;
+            background: var(--card-bg);
+            padding: 48px 40px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lifted);
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            border: 1px solid var(--border-soft);
+        }
+
+        .password-box .lock-icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .password-box h2 {
+            font-family: 'Fraunces', serif;
+            font-optical-sizing: auto;
+            font-weight: 600;
+            font-size: 28px;
+            color: var(--robin-color);
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .password-box p {
+            color: var(--text-muted);
+            margin-bottom: 28px;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 500;
+            color: var(--text-primary);
+            background: var(--bg-warm);
+            margin-bottom: 16px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none;
+        }
+
+        .password-input:focus {
+            border-color: var(--robin-color);
+            box-shadow: 0 0 0 3px var(--robin-glow);
+        }
+
+        .password-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--robin-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .password-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(236, 72, 153, 0.35);
+        }
+
+        .password-submit:active {
+            transform: translateY(0);
+        }
+
+        .password-error {
+            color: #DC2626;
+            margin-top: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .password-error.show {
+            opacity: 1;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            15%, 45%, 75% { transform: translateX(-8px); }
+            30%, 60%, 90% { transform: translateX(8px); }
+        }
+
+        /* === APP SHELL === */
+        .app-content {
+            display: none;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 16px 120px;
+        }
+
+        .app-content.unlocked {
+            display: block;
+        }
+
+        /* === CHIP BAR === */
+        .chip-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-cream);
+            padding: 16px 0 12px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            justify-content: center;
+        }
+
+        .chip-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip-bar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border-soft);
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+            border: 2px solid transparent;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .chip:active {
+            transform: scale(0.95);
+        }
+
+        .chip .chip-emoji {
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .chip.inactive {
+            background: var(--card-bg);
+            border-color: var(--border-soft);
+            color: var(--text-secondary);
+        }
+
+        .chip.inactive:hover {
+            border-color: var(--text-muted);
+        }
+
+        /* === PHOTO HEADER === */
+        .photo-header {
+            position: relative;
+            width: calc(100% + 32px);
+            margin-left: -16px;
+            height: 220px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .photo-header .photo-gradient {
+            position: absolute;
+            inset: 0;
+            transition: opacity 0.4s ease;
+            display: flex;
+            align-items: flex-end;
+            padding: 24px;
+        }
+
+        .photo-header .photo-gradient .header-title {
+            font-family: 'Fraunces', serif;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-size: 24px;
+            color: white;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+            letter-spacing: -0.01em;
+        }
+
+        .photo-header .photo-gradient .header-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* === SECTION LABELS === */
+        .section-label {
+            font-family: 'Fraunces', serif;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-size: 18px;
+            color: var(--text-primary);
+            margin: 28px 0 14px;
+            letter-spacing: -0.01em;
+        }
+
+        .section-label .count {
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        /* === EVENT CARDS === */
+        .event-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: cardEnter 0.3s ease both;
+        }
+
+        @keyframes cardEnter {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+        }
+
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lifted);
+        }
+
+        .event-card.past {
+            opacity: 0.65;
+        }
+
+        .event-card .event-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .event-card .event-title {
+            font-family: 'Fraunces', serif;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-size: 16px;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+        }
+
+        .event-card .event-countdown {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 100px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .event-card .event-countdown.future {
+            background: var(--robin-light);
+            color: var(--robin-color);
+        }
+
+        .event-card .event-countdown.today {
+            background: var(--family-light);
+            color: #059669;
+        }
+
+        .event-card .event-countdown.past-badge {
+            background: #F3F4F6;
+            color: #9CA3AF;
+        }
+
+        .event-card .event-date {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .event-card .event-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .event-card .tag-pill {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .event-card .event-notes {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-soft);
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            cursor: pointer;
+        }
+
+        .event-card .event-notes summary {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .event-card .event-notes p {
+            margin-top: 8px;
+        }
+
+        .event-card .people-dots {
+            display: flex;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .event-card .people-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* === PATTERN OF THE DAY === */
+        .pattern-card {
+            background: linear-gradient(135deg, var(--bg-warm) 0%, #FFF9F5 100%);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-top: 32px;
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pattern-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--robin-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .pattern-card .pattern-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--robin-color);
+            margin-bottom: 12px;
+        }
+
+        .pattern-card .pattern-badge .pattern-number {
+            background: var(--robin-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-size: 11px;
+        }
+
+        .pattern-card .pattern-name {
+            font-family: 'Fraunces', serif;
+            font-optical-sizing: auto;
+            font-weight: 600;
+            font-size: 22px;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .pattern-card .pattern-description {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .pattern-card .pattern-reflection {
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(236, 72, 153, 0.04);
+            border-left: 3px solid var(--robin-color);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-style: italic;
+        }
+
+        .pattern-card .pattern-reflection .reflection-label {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--robin-color);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .pattern-card .pattern-toggles {
+            display: flex;
+            gap: 16px;
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-soft);
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            background: #D1D5DB;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch.on {
+            background: var(--robin-color);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        .toggle-switch.on::after {
+            transform: translateX(16px);
+        }
+
+        /* === FOOTER === */
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer .heart {
+            color: var(--robin-color);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 400px) {
+            .chip-bar {
+                justify-content: flex-start;
+                padding-left: 4px;
+            }
+            .chip {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            .photo-header {
+                height: 180px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .app-content {
+                padding-top: 8px;
+            }
+            .photo-header {
+                height: 280px;
+                border-radius: var(--radius-xl);
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Password Screen -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-box">
+            <span class="lock-icon">&#x1F338;</span>
+            <h2>Reis Family</h2>
+            <p>Enter the family password to continue</p>
+            <input type="password"
+                   class="password-input"
+                   id="passwordInput"
+                   placeholder="Family password"
+                   autocomplete="off">
+            <button class="password-submit" id="passwordSubmit">Unlock</button>
+            <div class="password-error" id="passwordError">That's not it — try again</div>
+        </div>
+    </div>
+
+    <!-- App Root -->
+    <div class="app-content" id="appContent">
+        <div id="root"></div>
+    </div>
+
+    <!-- React 18 + Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        // =========================================================
+        //  DATA MODEL
+        // =========================================================
+
+        const PEOPLE = [
+            { id: 'robin',     name: 'Robin',     emoji: '🌸', color: '#EC4899', light: '#FCE7F3', glow: 'rgba(236,72,153,0.15)' },
+            { id: 'katherine', name: 'Katherine', emoji: '💜', color: '#8B5CF6', light: '#EDE9FE', glow: 'rgba(139,92,246,0.15)' },
+            { id: 'jack',      name: 'Jack',      emoji: '💙', color: '#3B82F6', light: '#DBEAFE', glow: 'rgba(59,130,246,0.15)' },
+            { id: 'sandy',     name: 'Sandy',     emoji: '🐾', color: '#F59E0B', light: '#FEF3C7', glow: 'rgba(245,158,11,0.15)' },
+        ];
+
+        const EVENTS = [
+            // Robin milestones
+            { id: 1,  title: "Robin turns 7 months",   date: "2026-01-17", people: ["robin"],                       tags: ["milestone", "monthly"],  notes: "Seven months! Sitting up like a pro, reaching for everything in sight." },
+            { id: 2,  title: "Robin turns 8 months",   date: "2026-02-17", people: ["robin"],                       tags: ["milestone", "monthly"],  notes: "Eight months old. Army crawling and babbling up a storm." },
+            { id: 3,  title: "Robin turns 9 months",   date: "2026-03-17", people: ["robin"],                       tags: ["milestone", "monthly"],  notes: "Nine months on the outside — crawling everywhere, pulling up on furniture. Growing so fast!" },
+            { id: 4,  title: "Robin turns 10 months",  date: "2026-04-17", people: ["robin"],                       tags: ["milestone", "monthly"],  notes: null, countdown: true },
+            { id: 5,  title: "Robin turns 11 months",  date: "2026-05-17", people: ["robin"],                       tags: ["milestone", "monthly"],  notes: null, countdown: true },
+            { id: 6,  title: "Robin's 1st Birthday!",  date: "2026-06-17", people: ["robin", "katherine", "jack"],  tags: ["milestone", "birthday", "special"], notes: "One year old! 🎂🎉", countdown: true },
+
+            // Baptism
+            { id: 7,  title: "Easter Baptism at St. Philip's", date: "2026-04-05", people: ["robin", "katherine", "jack"], tags: ["milestone", "faith"], notes: "Robin's baptism — Easter Sunday. Family and community together.", countdown: true },
+
+            // Sandy
+            { id: 8,  title: "Sandy vet — combo vaccine + bordetella", date: "2026-03-17", people: ["sandy"], tags: ["health", "vet"], notes: "Annual vaccines and bordetella booster at Ardmore vet." },
+            { id: 9,  title: "Sandy's 23rd dog-year birthday", date: "2026-03-20", people: ["sandy"], tags: ["birthday", "fun"], notes: "52-day intervals from DOB Dec 10, 2022. Happy 23rd dog year! 🎂🐕", countdown: true },
+            { id: 10, title: "Sandy NexGard Plus monthly", date: "2026-04-01", people: ["sandy"], tags: ["health"], notes: "Monthly flea/tick/heartworm prevention.", countdown: true },
+
+            // Jack
+            { id: 11, title: "PT Session 10 with Ryan", date: "2026-03-17", people: ["jack"], tags: ["health", "pt"], notes: "Full session — multi-model analysis complete. 30+ exercises in protocol." },
+            { id: 12, title: "PT Session 11 with Ryan", date: "2026-03-21", people: ["jack"], tags: ["health", "pt"], notes: "Friday session. Exercise protocol triage — critical.", countdown: true },
+
+            // Family memories
+            { id: 13, title: "Move to Oklahoma",         date: "2025-12-01", people: ["robin", "katherine", "jack", "sandy"], tags: ["milestone", "memory"], notes: "The big move from California to Ardmore. New chapter begins." },
+            { id: 14, title: "First Christmas in Ardmore", date: "2025-12-25", people: ["robin", "katherine", "jack", "sandy"], tags: ["holiday", "memory"], notes: "Robin's first Christmas! 🎄 Cozy and full of love." },
+            { id: 15, title: "Robin's first New Year",   date: "2026-01-01", people: ["robin", "katherine", "jack"], tags: ["holiday", "memory"], notes: "Ringing in 2026 with our little one." },
+
+            // Katherine
+            { id: 16, title: "Katherine's birthday",     date: "2026-07-14", people: ["katherine", "robin", "jack"], tags: ["birthday", "special"], notes: null, countdown: true },
+
+            // Upcoming family
+            { id: 17, title: "Robin's first Easter",     date: "2026-04-05", people: ["robin", "katherine", "jack"], tags: ["holiday", "milestone"], notes: "Easter egg hunt for a 9-month-old — mostly supervised eating of everything.", countdown: true },
+            { id: 18, title: "Mother's Day",             date: "2026-05-10", people: ["katherine", "robin", "jack"], tags: ["holiday", "special"], notes: "Katherine's second Mother's Day. She's an incredible mom.", countdown: true },
+            { id: 19, title: "Father's Day",             date: "2026-06-21", people: ["jack", "robin", "katherine"], tags: ["holiday", "special"], notes: "Jack's second Father's Day with Robin.", countdown: true },
+
+            // Robin + Sandy
+            { id: 20, title: "Sandy learns to share toys with Robin", date: "2026-02-10", people: ["robin", "sandy"], tags: ["memory", "fun"], notes: "The moment Sandy dropped her ball in Robin's lap — instant best friends. 🐕👶" },
+
+            // Robin + Katherine
+            { id: 21, title: "Robin says 'mama' (almost)", date: "2026-03-05", people: ["robin", "katherine"], tags: ["milestone", "memory"], notes: "It sounded like 'mama' to us and that's what counts! 💜" },
+
+            // Robin + Jack
+            { id: 22, title: "Dad-daughter morning walks begin", date: "2026-02-01", people: ["robin", "jack"], tags: ["memory", "routine"], notes: "Daily walks through the neighborhood — Robin in the carrier, Jack narrating everything they see." },
+
+            // Jack career
+            { id: 23, title: "Career transition — new chapter", date: "2026-02-01", people: ["jack"], tags: ["career", "milestone"], notes: "Post-Panasonic Well. Building something new." },
+
+            // Sandy birthday (actual)
+            { id: 24, title: "Sandy's 3rd actual birthday", date: "2025-12-10", people: ["sandy", "robin", "katherine", "jack"], tags: ["birthday", "memory"], notes: "Sandy turned 3! Special treats and a new toy from Robin (with help)." },
+
+            // Upcoming
+            { id: 25, title: "Robin's half-birthday",    date: "2025-12-17", people: ["robin"], tags: ["milestone", "monthly"], notes: "Six months old — halfway to one year! Sitting up, laughing at everything." },
+        ];
+
+        // ~50 curated patterns with emoji + category (from v1 dashboard)
+        const CURATED_PATTERNS = {
+            1: { name: "Independent Regions", emoji: "🌍", category: "community" },
+            7: { name: "The Countryside", emoji: "🌳", category: "community" },
+            12: { name: "Community of 7000", emoji: "🏘️", category: "community" },
+            18: { name: "Network of Learning", emoji: "📚", category: "family" },
+            24: { name: "Sacred Sites", emoji: "⛪", category: "community" },
+            37: { name: "House Cluster", emoji: "🏘️", category: "home" },
+            67: { name: "Common Land", emoji: "🌱", category: "home" },
+            75: { name: "The Family", emoji: "👨‍👩‍👧‍👦", category: "family" },
+            79: { name: "Your Own Home", emoji: "🏡", category: "home" },
+            95: { name: "Building Complex", emoji: "🏗️", category: "home" },
+            106: { name: "Positive Outdoor Space", emoji: "🌿", category: "home" },
+            109: { name: "Long Thin House", emoji: "🏠", category: "home" },
+            115: { name: "Courtyards Which Live", emoji: "🏛️", category: "home" },
+            127: { name: "Intimacy Gradient", emoji: "🚪", category: "home" },
+            129: { name: "Common Areas at the Heart", emoji: "❤️", category: "home" },
+            131: { name: "The Flow Through Rooms", emoji: "🚶", category: "home" },
+            134: { name: "Zen View", emoji: "🌅", category: "comfort" },
+            136: { name: "Couple's Realm", emoji: "💑", category: "family" },
+            138: { name: "Sleeping to the East", emoji: "🌅", category: "home" },
+            139: { name: "Farmhouse Kitchen", emoji: "🍳", category: "family" },
+            140: { name: "Private Terrace on the Street", emoji: "🪑", category: "home" },
+            142: { name: "Sequence of Sitting Spaces", emoji: "💺", category: "comfort" },
+            143: { name: "Bed Cluster", emoji: "🛏️", category: "family" },
+            147: { name: "Communal Eating", emoji: "🍽️", category: "family" },
+            148: { name: "Small Work Groups", emoji: "💼", category: "work" },
+            151: { name: "Small Meeting Rooms", emoji: "🤝", category: "work" },
+            153: { name: "Rooms to Rent", emoji: "🔑", category: "home" },
+            159: { name: "Light on Two Sides", emoji: "💡", category: "comfort" },
+            161: { name: "Sunny Place", emoji: "☀️", category: "comfort" },
+            163: { name: "Outdoor Room", emoji: "🏡", category: "home" },
+            165: { name: "Opening to the Street", emoji: "🚪", category: "home" },
+            167: { name: "Six-Foot Balcony", emoji: "🏙️", category: "home" },
+            171: { name: "Tree Places", emoji: "🌳", category: "comfort" },
+            172: { name: "Garden Growing Wild", emoji: "🌺", category: "home" },
+            173: { name: "Garden Wall", emoji: "🧱", category: "home" },
+            174: { name: "Trellised Walk", emoji: "🌿", category: "home" },
+            176: { name: "Garden Seat", emoji: "🪑", category: "comfort" },
+            177: { name: "Vegetable Garden", emoji: "🥕", category: "home" },
+            179: { name: "Alcoves", emoji: "📐", category: "comfort" },
+            180: { name: "Window Place", emoji: "🪟", category: "comfort" },
+            181: { name: "The Fire", emoji: "🔥", category: "family" },
+            182: { name: "Eating Atmosphere", emoji: "🕯️", category: "family" },
+            183: { name: "Workspace Enclosure", emoji: "🖥️", category: "work" },
+            185: { name: "Sitting Circle", emoji: "⭕", category: "comfort" },
+            188: { name: "Bed Alcove", emoji: "🛌", category: "comfort" },
+            190: { name: "Ceiling Height Variety", emoji: "📏", category: "home" },
+            191: { name: "The Shape of Indoor Space", emoji: "⬜", category: "home" },
+            192: { name: "Windows Overlooking Life", emoji: "👁️", category: "home" },
+            194: { name: "Interior Windows", emoji: "🪟", category: "home" },
+            195: { name: "Staircase Volume", emoji: "🪜", category: "home" },
+            196: { name: "Corner Doors", emoji: "🚪", category: "home" },
+            203: { name: "Child Caves", emoji: "👧", category: "family" },
+            210: { name: "Floor and Ceiling Layout", emoji: "🏗️", category: "home" },
+            222: { name: "Low Sill", emoji: "🪟", category: "comfort" },
+            225: { name: "Frames as Thickened Edges", emoji: "🖼️", category: "home" },
+            227: { name: "Filtered Light", emoji: "✨", category: "comfort" },
+            235: { name: "Soft Inside Walls", emoji: "🧱", category: "comfort" },
+            236: { name: "Windows Which Open Wide", emoji: "🌬️", category: "comfort" },
+            237: { name: "Solid Doors with Glass", emoji: "🚪", category: "home" },
+            241: { name: "Seat Spots", emoji: "💺", category: "comfort" },
+            246: { name: "Climbing Plants", emoji: "🌿", category: "home" },
+            247: { name: "Paving with Cracks", emoji: "🪨", category: "home" },
+            250: { name: "Warm Colors", emoji: "🎨", category: "comfort" },
+            251: { name: "Different Chairs", emoji: "🪑", category: "comfort" },
+            252: { name: "Pools of Light", emoji: "💡", category: "comfort" },
+            253: { name: "Things From Your Life", emoji: "🖼️", category: "family" },
+        };
+
+        // Full 253-pattern dataset (from v2 JSON)
+        const ALL_PATTERNS = {"1":{"name":"Independent Regions","category":"region","scale":"region","summary":"Metropolitan regions work best when divided into autonomous areas"},"2":{"name":"The Distribution of Towns","category":"region","scale":"region","summary":"Towns should be distributed to balance population and preserve countryside"},"3":{"name":"City Country Fingers","category":"region","scale":"region","summary":"Urban and rural areas should interweave like fingers"},"4":{"name":"Agricultural Valleys","category":"region","scale":"region","summary":"Preserve farmland in valleys between urban development"},"5":{"name":"Lace of Country Streets","category":"region","scale":"region","summary":"Create a network of country roads connecting countryside"},"6":{"name":"Country Towns","category":"region","scale":"region","summary":"Rural towns serve as centers for countryside"},"7":{"name":"The Countryside","category":"region","scale":"region","summary":"Protect undeveloped countryside from sprawl"},"8":{"name":"Mosaic of Subcultures","category":"town","scale":"town","summary":"Cities thrive with diverse neighborhoods for different lifestyles"},"9":{"name":"Scattered Work","category":"town","scale":"town","summary":"Distribute workplaces throughout residential areas"},"10":{"name":"Magic of the City","category":"town","scale":"town","summary":"Create opportunities for chance encounters and discovery"},"11":{"name":"Local Transport Areas","category":"town","scale":"town","summary":"Organize cities around local public transport zones"},"12":{"name":"Community of 7000","category":"town","scale":"neighborhood","summary":"Effective communities contain 5,000-10,000 people"},"13":{"name":"Subculture Boundary","category":"town","scale":"neighborhood","summary":"Define neighborhood edges with physical boundaries"},"14":{"name":"Identifiable Neighborhood","category":"town","scale":"neighborhood","summary":"Each neighborhood needs clear identity and boundaries"},"15":{"name":"Neighborhood Boundary","category":"town","scale":"neighborhood","summary":"Use streets and natural features to define neighborhoods"},"16":{"name":"Web of Public Transportation","category":"town","scale":"town","summary":"Connect all areas with accessible public transit"},"17":{"name":"Ring Roads","category":"town","scale":"town","summary":"Use ring roads to keep through traffic out of communities"},"18":{"name":"Network of Learning","category":"town","scale":"town","summary":"Learning happens throughout life, not just in schools"},"19":{"name":"Web of Shopping","category":"town","scale":"town","summary":"Distribute shopping throughout neighborhoods"},"20":{"name":"Mini-Buses","category":"town","scale":"town","summary":"Small buses serve local needs better than large ones"},"21":{"name":"Four-Story Limit","category":"town","scale":"neighborhood","summary":"Buildings over four stories damage street life"},"22":{"name":"Nine Percent Parking","category":"town","scale":"neighborhood","summary":"Limit parking to preserve community character"},"23":{"name":"Parallel Roads","category":"town","scale":"neighborhood","summary":"Use parallel roads to distribute traffic"},"24":{"name":"Sacred Sites","category":"town","scale":"neighborhood","summary":"Mark and protect places people feel are special"},"25":{"name":"Access to Water","category":"town","scale":"neighborhood","summary":"Provide public access to rivers, lakes, and ocean"},"26":{"name":"Life Cycle","category":"town","scale":"neighborhood","summary":"Neighborhoods should house all ages and life stages"},"27":{"name":"Men and Women","category":"town","scale":"neighborhood","summary":"Create balance between traditionally male and female spaces"},"28":{"name":"Eccentric Nucleus","category":"town","scale":"neighborhood","summary":"Place community heart off-center, not in middle"},"29":{"name":"Density Rings","category":"town","scale":"neighborhood","summary":"Vary density from dense centers to sparse edges"},"30":{"name":"Activity Nodes","category":"town","scale":"neighborhood","summary":"Create concentrated areas of activity and commerce"},"31":{"name":"Promenade","category":"town","scale":"neighborhood","summary":"Public walkways where people can stroll and see each other"},"32":{"name":"Shopping Street","category":"town","scale":"neighborhood","summary":"Concentrate shopping along pedestrian streets"},"33":{"name":"Night Life","category":"town","scale":"neighborhood","summary":"Create distinct areas for evening activities"},"34":{"name":"Interchange","category":"town","scale":"neighborhood","summary":"Major intersections become natural gathering points"},"35":{"name":"Household Mix","category":"town","scale":"neighborhood","summary":"Mix household types within neighborhoods"},"36":{"name":"Degrees of Publicness","category":"town","scale":"neighborhood","summary":"Create gradual transitions from public to private"},"37":{"name":"House Cluster","category":"town","scale":"cluster","summary":"Group houses in comfortable clusters"},"38":{"name":"Row Houses","category":"town","scale":"cluster","summary":"Attached houses create efficient land use"},"39":{"name":"Housing Hill","category":"town","scale":"cluster","summary":"Slope housing upward for light and views"},"40":{"name":"Old People Everywhere","category":"town","scale":"neighborhood","summary":"Integrate elderly into all neighborhoods"},"41":{"name":"Work Community","category":"town","scale":"cluster","summary":"Create small work communities of 10-20 people"},"42":{"name":"Industrial Ribbon","category":"town","scale":"town","summary":"Organize industry along transportation corridors"},"43":{"name":"University as a Marketplace","category":"town","scale":"campus","summary":"Universities should integrate with surrounding city"},"44":{"name":"Local Town Hall","category":"town","scale":"neighborhood","summary":"Each neighborhood needs accessible government"},"45":{"name":"Necklace of Community Projects","category":"town","scale":"neighborhood","summary":"Link community facilities along pedestrian paths"},"46":{"name":"Market of Many Shops","category":"town","scale":"neighborhood","summary":"Markets with many small shops, not single stores"},"47":{"name":"Health Center","category":"town","scale":"neighborhood","summary":"Local health facilities integrated into neighborhoods"},"48":{"name":"Housing in Between","category":"town","scale":"neighborhood","summary":"Mix housing into commercial and work areas"},"49":{"name":"Looped Local Roads","category":"town","scale":"neighborhood","summary":"Use loops instead of through streets in neighborhoods"},"50":{"name":"T Junctions","category":"town","scale":"neighborhood","summary":"T-intersections are safer than four-way stops"},"51":{"name":"Green Streets","category":"town","scale":"neighborhood","summary":"Plant trees and greenery along streets"},"52":{"name":"Network of Paths and Cars","category":"town","scale":"neighborhood","summary":"Separate pedestrian and vehicle networks"},"53":{"name":"Main Gateways","category":"building","scale":"building","summary":"Important entrances mark transitions clearly"},"54":{"name":"Road Crossing","category":"town","scale":"neighborhood","summary":"Make pedestrian crossings safe and clear"},"55":{"name":"Raised Walk","category":"town","scale":"neighborhood","summary":"Elevate pedestrian paths above street level"},"56":{"name":"Bike Paths and Racks","category":"town","scale":"neighborhood","summary":"Provide safe cycling infrastructure"},"57":{"name":"Children in the City","category":"town","scale":"neighborhood","summary":"Design streets safe enough for children"},"58":{"name":"Carnival","category":"town","scale":"neighborhood","summary":"Create temporary festival spaces"},"59":{"name":"Quiet Backs","category":"building","scale":"cluster","summary":"Separate quiet rear spaces from street fronts"},"60":{"name":"Accessible Green","category":"town","scale":"neighborhood","summary":"Parks within 3-minute walk of every home"},"61":{"name":"Small Public Squares","category":"town","scale":"neighborhood","summary":"Intimate plazas for gathering, not vast empty spaces"},"62":{"name":"High Places","category":"town","scale":"neighborhood","summary":"Preserve and create elevated viewpoints"},"63":{"name":"Dancing in the Street","category":"town","scale":"neighborhood","summary":"Streets should accommodate celebration"},"64":{"name":"Pools and Streams","category":"town","scale":"neighborhood","summary":"Incorporate water features in public spaces"},"65":{"name":"Birth Places","category":"town","scale":"neighborhood","summary":"Provide intimate spaces for childbirth"},"66":{"name":"Holy Ground","category":"town","scale":"neighborhood","summary":"Create contemplative religious spaces"},"67":{"name":"Common Land","category":"town","scale":"cluster","summary":"Give land ownership to those who use it"},"68":{"name":"Connected Play","category":"town","scale":"neighborhood","summary":"Link children's play areas together"},"69":{"name":"Public Outdoor Room","category":"town","scale":"neighborhood","summary":"Define outdoor spaces like rooms"},"70":{"name":"Grave Sites","category":"town","scale":"neighborhood","summary":"Integrate burial places into communities"},"71":{"name":"Still Water","category":"town","scale":"neighborhood","summary":"Create pools and ponds for reflection"},"72":{"name":"Local Sports","category":"town","scale":"neighborhood","summary":"Provide accessible sports facilities"},"73":{"name":"Adventure Playground","category":"town","scale":"neighborhood","summary":"Let children build and create play spaces"},"74":{"name":"Animals","category":"town","scale":"neighborhood","summary":"Integrate domestic animals into urban life"},"75":{"name":"The Family","category":"building","scale":"household","summary":"Nuclear families need extended social support"},"76":{"name":"House for a Small Family","category":"building","scale":"building","summary":"Design for 1-2 person households"},"77":{"name":"House for a Couple","category":"building","scale":"building","summary":"Intimate spaces for two people"},"78":{"name":"House for One Person","category":"building","scale":"building","summary":"Complete small homes for individuals"},"79":{"name":"Your Own Home","category":"building","scale":"building","summary":"People need control over their space"},"80":{"name":"Self-Governing Workshops and Offices","category":"building","scale":"building","summary":"Workers control their workspaces"},"81":{"name":"Small Services Without Red Tape","category":"building","scale":"building","summary":"Enable small businesses easily"},"82":{"name":"Office Connections","category":"building","scale":"building","summary":"Connect individual offices to common areas"},"83":{"name":"Master and Apprentices","category":"building","scale":"building","summary":"Organize work around learning relationships"},"84":{"name":"Teenage Society","category":"building","scale":"building","summary":"Provide spaces for teenage independence"},"85":{"name":"Shopfront Schools","category":"building","scale":"building","summary":"Small learning spaces in storefronts"},"86":{"name":"Children's Home","category":"building","scale":"building","summary":"Group homes feel like large families"},"87":{"name":"Individually Owned Shops","category":"building","scale":"building","summary":"Small independent shops, not chains"},"88":{"name":"Street Cafe","category":"building","scale":"building","summary":"Outdoor eating spaces facing streets"},"89":{"name":"Corner Grocery","category":"building","scale":"building","summary":"Small neighborhood shops on corners"},"90":{"name":"Beer Hall","category":"building","scale":"building","summary":"Public drinking and gathering places"},"91":{"name":"Traveler's Inn","category":"building","scale":"building","summary":"Small inns integrated into neighborhoods"},"92":{"name":"Bus Stop","category":"building","scale":"building","summary":"Sheltered waiting areas at transit stops"},"93":{"name":"Food Stands","category":"building","scale":"building","summary":"Small vendors selling prepared food"},"94":{"name":"Sleeping in Public","category":"building","scale":"building","summary":"Provide benches and spaces for rest"},"95":{"name":"Building Complex","category":"building","scale":"building","summary":"Groups of buildings create unified wholes"},"96":{"name":"Number of Stories","category":"building","scale":"building","summary":"Building height affects character"},"97":{"name":"Shielded Parking","category":"building","scale":"building","summary":"Hide parking from public view"},"98":{"name":"Circulation Realms","category":"building","scale":"building","summary":"Organize movement through distinct zones"},"99":{"name":"Main Building","category":"building","scale":"building","summary":"One structure dominates a building group"},"100":{"name":"Pedestrian Street","category":"building","scale":"cluster","summary":"Streets primarily for walking"},"101":{"name":"Building Thoroughfare","category":"building","scale":"building","summary":"Main paths pass through buildings"},"102":{"name":"Family of Entrances","category":"building","scale":"building","summary":"Multiple related entry points"},"103":{"name":"Small Parking Lots","category":"building","scale":"building","summary":"Break parking into small clusters"},"104":{"name":"Site Repair","category":"building","scale":"site","summary":"Build on damaged land, preserve healthy areas"},"105":{"name":"South Facing Outdoors","category":"building","scale":"site","summary":"Orient outdoor spaces to maximize sun"},"106":{"name":"Positive Outdoor Space","category":"building","scale":"site","summary":"Design outdoor spaces intentionally, not as leftovers"},"107":{"name":"Wings of Light","category":"building","scale":"building","summary":"Extend buildings to capture natural light"},"108":{"name":"Connected Buildings","category":"building","scale":"building","summary":"Link structures together physically"},"109":{"name":"Long Thin House","category":"building","scale":"building","summary":"Elongated floor plans maximize natural light"},"110":{"name":"Main Entrance","category":"building","scale":"building","summary":"Clear primary entry visible from arrival"},"111":{"name":"Half-Hidden Garden","category":"building","scale":"site","summary":"Gardens partially concealed create mystery"},"112":{"name":"Entrance Transition","category":"building","scale":"building","summary":"Create threshold between outside and inside"},"113":{"name":"Car Connection","category":"building","scale":"building","summary":"Link parking to entrance directly"},"114":{"name":"Hierarchy of Open Space","category":"building","scale":"site","summary":"Organize outdoor spaces in size order"},"115":{"name":"Courtyards Which Live","category":"building","scale":"building","summary":"Properly enclosed courtyards feel alive"},"116":{"name":"Cascade of Roofs","category":"building","scale":"building","summary":"Step roofs down in height"},"117":{"name":"Sheltering Roof","category":"building","scale":"building","summary":"Roofs extend to provide shelter"},"118":{"name":"Roof Garden","category":"building","scale":"building","summary":"Make flat roofs usable gardens"},"119":{"name":"Arcades","category":"building","scale":"building","summary":"Covered walkways along building fronts"},"120":{"name":"Paths and Goals","category":"building","scale":"building","summary":"Make destinations visible from paths"},"121":{"name":"Path Shape","category":"building","scale":"building","summary":"Design paths with character and rhythm"},"122":{"name":"Building Fronts","category":"building","scale":"building","summary":"Face buildings toward activity"},"123":{"name":"Pedestrian Density","category":"building","scale":"building","summary":"Concentrate foot traffic for vitality"},"124":{"name":"Activity Pockets","category":"building","scale":"building","summary":"Create alcoves along paths for activities"},"125":{"name":"Stair Seats","category":"building","scale":"building","summary":"Wide stairs become seating"},"126":{"name":"Something Roughly in the Middle","category":"building","scale":"building","summary":"Center spaces around a focal point"},"127":{"name":"Intimacy Gradient","category":"building","scale":"building","summary":"Arrange spaces from public to private"},"128":{"name":"Indoor Sunlight","category":"construction","scale":"room","summary":"Bring direct sunlight deep into buildings"},"129":{"name":"Common Areas at the Heart","category":"construction","scale":"building","summary":"Place shared spaces centrally"},"130":{"name":"Entrance Room","category":"construction","scale":"room","summary":"Create transition room at entry"},"131":{"name":"The Flow Through Rooms","category":"construction","scale":"room","summary":"Movement between rooms creates life"},"132":{"name":"Short Passages","category":"construction","scale":"room","summary":"Keep hallways as short as possible"},"133":{"name":"Staircase as a Stage","category":"construction","scale":"room","summary":"Stairs become places to see and be seen"},"134":{"name":"Zen View","category":"construction","scale":"room","summary":"Place window to frame specific outdoor view"},"135":{"name":"Tapestry of Light and Dark","category":"construction","scale":"room","summary":"Vary brightness throughout spaces"},"136":{"name":"Couple's Realm","category":"construction","scale":"room","summary":"Partners need private shared territory"},"137":{"name":"Children's Realm","category":"construction","scale":"room","summary":"Kids need their own separate domain"},"138":{"name":"Sleeping to the East","category":"construction","scale":"room","summary":"Place bedrooms to receive morning sun"},"139":{"name":"Farmhouse Kitchen","category":"construction","scale":"room","summary":"Large kitchen with family table"},"140":{"name":"Private Terrace on the Street","category":"construction","scale":"room","summary":"Ground floor outdoor space with privacy"},"141":{"name":"A Room of One's Own","category":"construction","scale":"room","summary":"Everyone needs private personal space"},"142":{"name":"Sequence of Sitting Spaces","category":"construction","scale":"room","summary":"Create multiple distinct seating areas"},"143":{"name":"Bed Cluster","category":"construction","scale":"room","summary":"Group bedrooms together"},"144":{"name":"Bathing Room","category":"construction","scale":"room","summary":"Bathroom as place for leisure, not just utility"},"145":{"name":"Bulk Storage","category":"construction","scale":"room","summary":"Dedicated space for stored items"},"146":{"name":"Flexible Office Space","category":"construction","scale":"room","summary":"Adaptable workspace configuration"},"147":{"name":"Communal Eating","category":"construction","scale":"room","summary":"Shared dining for groups"},"148":{"name":"Small Work Groups","category":"construction","scale":"room","summary":"Workspaces for 2-8 people"},"149":{"name":"Reception Welcomes You","category":"construction","scale":"room","summary":"Welcoming entry area with person"},"150":{"name":"A Place to Wait","category":"construction","scale":"room","summary":"Comfortable waiting areas"},"151":{"name":"Small Meeting Rooms","category":"construction","scale":"room","summary":"Intimate 2-4 person meeting spaces"},"152":{"name":"Half-Private Office","category":"construction","scale":"room","summary":"Semi-enclosed work areas"},"153":{"name":"Rooms to Rent","category":"construction","scale":"room","summary":"Rentable spaces in buildings"},"154":{"name":"Teenager's Cottage","category":"construction","scale":"room","summary":"Semi-independent space for teens"},"155":{"name":"Old Age Cottage","category":"construction","scale":"room","summary":"Attached but separate elderly housing"},"156":{"name":"Settled Work","category":"construction","scale":"room","summary":"Permanent workspace, not temporary desk"},"157":{"name":"Home Workshop","category":"construction","scale":"room","summary":"Dedicated making and repair space"},"158":{"name":"Open Stairs","category":"construction","scale":"room","summary":"Visible stairs connect floors socially"},"159":{"name":"Light on Two Sides of Every Room","category":"construction","scale":"room","summary":"Natural light from multiple directions"},"160":{"name":"Building Edge","category":"construction","scale":"room","summary":"Useful spaces at building perimeter"},"161":{"name":"Sunny Place","category":"construction","scale":"room","summary":"Important rooms face south for sun"},"162":{"name":"North Face","category":"construction","scale":"room","summary":"Use northern exposure appropriately"},"163":{"name":"Outdoor Room","category":"construction","scale":"room","summary":"Defined outdoor living spaces"},"164":{"name":"Street Windows","category":"construction","scale":"room","summary":"Ground floor windows connect to street"},"165":{"name":"Opening to the Street","category":"construction","scale":"room","summary":"Businesses open directly to sidewalk"},"166":{"name":"Gallery Surround","category":"construction","scale":"room","summary":"Walkway around building perimeter"},"167":{"name":"Six-Foot Balcony","category":"construction","scale":"room","summary":"Deep balconies are actually usable"},"168":{"name":"Connection to the Earth","category":"construction","scale":"room","summary":"Ground floor connection to soil"},"169":{"name":"Terraced Slope","category":"construction","scale":"site","summary":"Step buildings on hillsides"},"170":{"name":"Fruit Trees","category":"construction","scale":"site","summary":"Plant productive trees"},"171":{"name":"Tree Places","category":"construction","scale":"site","summary":"Seating near trees"},"172":{"name":"Garden Growing Wild","category":"construction","scale":"site","summary":"Allow natural growth in gardens"},"173":{"name":"Garden Wall","category":"construction","scale":"site","summary":"Enclose gardens with walls"},"174":{"name":"Trellised Walk","category":"construction","scale":"site","summary":"Covered garden paths"},"175":{"name":"Greenhouse","category":"construction","scale":"site","summary":"Indoor growing spaces"},"176":{"name":"Garden Seat","category":"construction","scale":"site","summary":"Private seating in garden"},"177":{"name":"Vegetable Garden","category":"construction","scale":"site","summary":"Growing food at home"},"178":{"name":"Compost","category":"construction","scale":"site","summary":"Organic waste recycling"},"179":{"name":"Alcoves","category":"construction","scale":"room","summary":"Small niches off larger rooms"},"180":{"name":"Window Place","category":"construction","scale":"room","summary":"Bay windows with seating"},"181":{"name":"The Fire","category":"construction","scale":"room","summary":"Fireplace as gathering focus"},"182":{"name":"Eating Atmosphere","category":"construction","scale":"room","summary":"Create distinct dining ambiance"},"183":{"name":"Workspace Enclosure","category":"construction","scale":"room","summary":"Three-sided work areas"},"184":{"name":"Cooking Layout","category":"construction","scale":"room","summary":"Efficient kitchen arrangement"},"185":{"name":"Sitting Circle","category":"construction","scale":"room","summary":"Circular seating arrangements"},"186":{"name":"Communal Sleeping","category":"construction","scale":"room","summary":"Shared sleeping spaces"},"187":{"name":"Marriage Bed","category":"construction","scale":"room","summary":"Bed as couple's territory"},"188":{"name":"Bed Alcove","category":"construction","scale":"room","summary":"Enclosed sleeping nook"},"189":{"name":"Dressing Room","category":"construction","scale":"room","summary":"Dedicated space for dressing"},"190":{"name":"Ceiling Height Variety","category":"construction","scale":"room","summary":"Vary ceiling heights"},"191":{"name":"The Shape of Indoor Space","category":"construction","scale":"room","summary":"Right proportions make spaces alive"},"192":{"name":"Windows Overlooking Life","category":"construction","scale":"room","summary":"View active areas from inside"},"193":{"name":"Half-Open Wall","category":"construction","scale":"room","summary":"Partial walls connect and separate"},"194":{"name":"Interior Windows","category":"construction","scale":"room","summary":"Windows between interior rooms"},"195":{"name":"Staircase Volume","category":"construction","scale":"room","summary":"Give stairs generous space"},"196":{"name":"Corner Doors","category":"construction","scale":"room","summary":"Doors in corners preserve wall space"},"197":{"name":"Thick Walls","category":"construction","scale":"construction","summary":"Deep walls create alcoves and storage"},"198":{"name":"Closets Between Rooms","category":"construction","scale":"construction","summary":"Storage as sound buffer"},"199":{"name":"Sunny Counter","category":"construction","scale":"room","summary":"Kitchen workspace with sun"},"200":{"name":"Open Shelves","category":"construction","scale":"room","summary":"Display objects on shelves"},"201":{"name":"Waist-High Shelf","category":"construction","scale":"room","summary":"Ledges at comfortable height"},"202":{"name":"Built-in Seats","category":"construction","scale":"room","summary":"Fixed seating in windows and corners"},"203":{"name":"Child Caves","category":"construction","scale":"room","summary":"Small crawl spaces for kids"},"204":{"name":"Secret Place","category":"construction","scale":"room","summary":"Hidden personal spots"},"205":{"name":"Structure Follows Social Spaces","category":"finishing","scale":"construction","summary":"Building structure reflects room layout"},"206":{"name":"Efficient Structure","category":"finishing","scale":"construction","summary":"Minimize structural material"},"207":{"name":"Good Materials","category":"finishing","scale":"construction","summary":"Use natural, durable materials"},"208":{"name":"Gradual Stiffening","category":"finishing","scale":"construction","summary":"Build from flexible to rigid"},"209":{"name":"Roof Layout","category":"finishing","scale":"construction","summary":"Roof structure follows rooms"},"210":{"name":"Floor and Ceiling Layout","category":"finishing","scale":"construction","summary":"Floor-to-floor follows social spaces"},"211":{"name":"Thickening the Outer Walls","category":"finishing","scale":"construction","summary":"Build up exterior wall thickness"},"212":{"name":"Columns at the Corners","category":"finishing","scale":"construction","summary":"Structural columns define spaces"},"213":{"name":"Final Column Distribution","category":"finishing","scale":"construction","summary":"Column placement creates rhythm"},"214":{"name":"Root Foundations","category":"finishing","scale":"construction","summary":"Foundation spreads like roots"},"215":{"name":"Ground Floor Slab","category":"finishing","scale":"construction","summary":"Slab floor connects to earth"},"216":{"name":"Box Columns","category":"finishing","scale":"construction","summary":"Hollow structural columns"},"217":{"name":"Perimeter Beams","category":"finishing","scale":"construction","summary":"Beams around building edge"},"218":{"name":"Wall Membrane","category":"finishing","scale":"construction","summary":"Structural wall surface"},"219":{"name":"Floor-Ceiling Vaults","category":"finishing","scale":"construction","summary":"Arched floor/ceiling structure"},"220":{"name":"Roof Vaults","category":"finishing","scale":"construction","summary":"Vaulted roof construction"},"221":{"name":"Natural Doors and Windows","category":"finishing","scale":"construction","summary":"Openings follow structure naturally"},"222":{"name":"Low Sill","category":"finishing","scale":"construction","summary":"Window sills low for sitting views"},"223":{"name":"Deep Reveals","category":"finishing","scale":"construction","summary":"Thick walls create deep openings"},"224":{"name":"Low Doorway","category":"finishing","scale":"construction","summary":"Lower doors create intimacy"},"225":{"name":"Frames as Thickened Edges","category":"finishing","scale":"construction","summary":"Build up edges around openings"},"226":{"name":"Column Place","category":"finishing","scale":"construction","summary":"Columns create defined spots"},"227":{"name":"Column Connection","category":"finishing","scale":"construction","summary":"Express column-to-beam joints"},"228":{"name":"Stair Vault","category":"finishing","scale":"construction","summary":"Vault under stair treads"},"229":{"name":"Duct Space","category":"finishing","scale":"construction","summary":"Accessible space for utilities"},"230":{"name":"Radiant Heat","category":"finishing","scale":"construction","summary":"Floor or wall heating"},"231":{"name":"Dormer Windows","category":"finishing","scale":"construction","summary":"Windows in sloped roofs"},"232":{"name":"Roof Caps","category":"finishing","scale":"construction","summary":"Protective roof edges"},"233":{"name":"Floor Surface","category":"finishing","scale":"finishing","summary":"Natural floor materials"},"234":{"name":"Lapped Outside Walls","category":"finishing","scale":"finishing","summary":"Overlapping exterior finish"},"235":{"name":"Soft Inside Walls","category":"finishing","scale":"finishing","summary":"Textured interior surfaces"},"236":{"name":"Windows Which Open Wide","category":"finishing","scale":"finishing","summary":"Operable windows for air"},"237":{"name":"Solid Doors with Glass","category":"finishing","scale":"finishing","summary":"Doors with vision panels"},"238":{"name":"Filtered Light","category":"finishing","scale":"finishing","summary":"Screens and translucent materials"},"239":{"name":"Small Panes","category":"finishing","scale":"finishing","summary":"Multiple small window panes"},"240":{"name":"Half-Inch Trim","category":"finishing","scale":"finishing","summary":"Minimal molding and trim"},"241":{"name":"Seat Spots","category":"finishing","scale":"finishing","summary":"Built-in comfortable seating"},"242":{"name":"Front Door Bench","category":"finishing","scale":"finishing","summary":"Seat by entrance"},"243":{"name":"Sitting Wall","category":"finishing","scale":"finishing","summary":"Low walls for seating"},"244":{"name":"Canvas Roofs","category":"finishing","scale":"finishing","summary":"Fabric awnings and covers"},"245":{"name":"Raised Flowers","category":"finishing","scale":"finishing","summary":"Elevated planters"},"246":{"name":"Climbing Plants","category":"finishing","scale":"finishing","summary":"Vines on structures"},"247":{"name":"Paving with Cracks Between the Stones","category":"finishing","scale":"finishing","summary":"Permeable paving"},"248":{"name":"Soft Tile and Brick","category":"finishing","scale":"finishing","summary":"Handmade irregular materials"},"249":{"name":"Ornament","category":"finishing","scale":"finishing","summary":"Meaningful decoration"},"250":{"name":"Warm Colors","category":"finishing","scale":"finishing","summary":"Earth tones and natural colors"},"251":{"name":"Different Chairs","category":"finishing","scale":"finishing","summary":"Varied seating, not matching sets"},"252":{"name":"Pools of Light","category":"finishing","scale":"finishing","summary":"Localized lighting, not uniform"},"253":{"name":"Things from Your Life","category":"finishing","scale":"finishing","summary":"Personal meaningful objects"}};
+
+        // Family reflections — personalized interpretations of Alexander patterns for the Reis family
+        const FAMILY_REFLECTIONS = {
+            75: "Instead of isolating as a nuclear family, create connections with extended family, friends, and neighbors. Have regular shared meals, help each other with childcare, and create community traditions. This is especially important during major life transitions like moving or having a baby.",
+            18: "Learning happens everywhere \u2014 cooking teaches math and chemistry, gardening teaches biology, fixing things teaches engineering. Create opportunities for hands-on learning in daily life rather than separating \u2018education\u2019 from \u2018real life.\u2019",
+            136: "Give parents their own wing or area of the home with a bedroom, bathroom, and sitting area where they can retreat and recharge \u2014 separate from children\u2019s spaces and guest areas.",
+            143: "Place children\u2019s bedrooms close together so they can easily visit each other, comfort each other at night, and develop strong sibling bonds through proximity.",
+            147: "Make the dining table a non-negotiable daily gathering point. Even 15 minutes of shared breakfast or dinner creates connection and ritual.",
+            181: "A fireplace or wood stove visible from kitchen, dining, and living areas becomes a natural gathering point that draws family together.",
+            127: "Front porch (most public) \u2192 living room \u2192 dining room \u2192 kitchen \u2192 bedrooms \u2192 master bedroom (most private). Visitors naturally stop at appropriate levels of intimacy.",
+            129: "Place the kitchen at the heart where hallways converge, so family members naturally encounter each other and stay connected throughout the day.",
+            131: "Create circular paths through rooms so you can walk living room \u2192 dining room \u2192 kitchen \u2192 hallway \u2192 living room. Avoid dead-end rooms that feel isolated.",
+            79: "Design your home so you can control temperature, light, and privacy in each space. Having this autonomy makes people feel truly at home.",
+            139: "A 15\u2019\u00d720\u2019 kitchen with room for a 6\u20138 person table becomes the heart of family life \u2014 homework, conversations, cooking together, and meals all happen here. This is where Robin will do homework while you cook dinner in 5 years.",
+            182: "Use a dimmer switch and lower the ceiling over the dining table to 7\u20138 feet to create intimacy and make meals feel special, separate from daily activity.",
+            159: "Place a bedroom in a corner of the house with windows on north and east walls, creating better light throughout the day and preventing harsh glare.",
+            134: "Position a window to frame a view of a single beautiful tree rather than a generic view of the whole yard. A focused, beautiful view is more calming.",
+            138: "Place bedrooms facing east so you wake naturally with sunrise, making mornings easier and improving sleep quality.",
+            180: "A bay window with a 20\u2033 deep sill and cushions creates a favorite reading spot that\u2019s both part of the room and separate from it. Perfect for reading to Robin as she grows.",
+            185: "Arrange living room seating in a circle or U-shape around a coffee table or fireplace, so everyone can see each other\u2019s faces when talking.",
+            203: "Under stairs, in closets, or purpose-built small spaces 3\u20134 feet high become magical play spaces for children to create their own world. Robin will love these in a few years!",
+            177: "Even a 4\u2019\u00d78\u2019 raised bed can grow significant food and connect you to seasons \u2014 perfect for teaching Robin about where food comes from.",
+            252: "Use multiple small lamps instead of overhead lights to create pools of light that draw people to different areas and create atmosphere.",
+            253: "Display family photos, children\u2019s artwork, travel souvenirs, inherited objects, and handmade items that tell your family\u2019s unique story. Your home should reflect your life, not a catalog.",
+        };
+
+        // =========================================================
+        //  TAG COLORS
+        // =========================================================
+
+        const TAG_COLORS = {
+            milestone: { bg: '#FCE7F3', color: '#BE185D' },
+            monthly:   { bg: '#FEF3C7', color: '#92400E' },
+            birthday:  { bg: '#DBEAFE', color: '#1E40AF' },
+            special:   { bg: '#EDE9FE', color: '#6D28D9' },
+            health:    { bg: '#D1FAE5', color: '#065F46' },
+            vet:       { bg: '#FEF3C7', color: '#92400E' },
+            pt:        { bg: '#DBEAFE', color: '#1E40AF' },
+            faith:     { bg: '#EDE9FE', color: '#6D28D9' },
+            holiday:   { bg: '#FEE2E2', color: '#991B1B' },
+            memory:    { bg: '#F3F4F6', color: '#374151' },
+            fun:       { bg: '#FCE7F3', color: '#BE185D' },
+            career:    { bg: '#DBEAFE', color: '#1E40AF' },
+            routine:   { bg: '#F3F4F6', color: '#374151' },
+        };
+
+        // =========================================================
+        //  UTILITY FUNCTIONS
+        // =========================================================
+
+        function getDaysFromNow(dateStr) {
+            const target = new Date(dateStr + 'T00:00:00');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return Math.round((target - today) / (1000 * 60 * 60 * 24));
+        }
+
+        function formatDate(dateStr) {
+            return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
+                weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+            });
+        }
+
+        function getCountdownText(days) {
+            if (days === 0) return { text: 'Today!', type: 'today' };
+            if (days === 1) return { text: 'Tomorrow', type: 'future' };
+            if (days > 1) return { text: `in ${days} days`, type: 'future' };
+            if (days === -1) return { text: '1 day ago', type: 'past-badge' };
+            return { text: `${Math.abs(days)} days ago`, type: 'past-badge' };
+        }
+
+        function getDailyPatternSeed() {
+            const d = new Date();
+            const str = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash);
+        }
+
+        function getPersonColor(personId) {
+            const person = PEOPLE.find(p => p.id === personId);
+            return person ? person.color : '#6B7280';
+        }
+
+        function getPersonLight(personId) {
+            const person = PEOPLE.find(p => p.id === personId);
+            return person ? person.light : '#F3F4F6';
+        }
+
+        // Gradient combos for photo header based on active chips
+        function getHeaderGradient(activeChips) {
+            if (activeChips.size === 0) {
+                return 'linear-gradient(135deg, #10B981 0%, #34D399 50%, #6EE7B7 100%)';
+            }
+            const chips = [...activeChips].sort();
+            const colors = chips.map(id => {
+                const p = PEOPLE.find(pp => pp.id === id);
+                return p ? p.color : '#6B7280';
+            });
+            if (colors.length === 1) {
+                return `linear-gradient(135deg, ${colors[0]} 0%, ${colors[0]}88 100%)`;
+            }
+            const stops = colors.map((c, i) => `${c} ${Math.round((i / (colors.length - 1)) * 100)}%`);
+            return `linear-gradient(135deg, ${stops.join(', ')})`;
+        }
+
+        function getHeaderTitle(activeChips) {
+            if (activeChips.size === 0) return 'The Reis Family';
+            const names = [...activeChips].map(id => PEOPLE.find(p => p.id === id)?.name).filter(Boolean);
+            if (names.length === 4) return 'The Reis Family';
+            if (names.length === 1) return names[0];
+            return names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1];
+        }
+
+        function getHeaderSubtitle(activeChips) {
+            const key = [...activeChips].sort().join('-');
+            const subtitles = {
+                'robin': 'Our little starlet',
+                'katherine': 'Incredible mom',
+                'jack': 'Recovery & reinvention',
+                'sandy': 'Chief Comfort Officer',
+                'katherine-robin': 'Mom-daughter magic',
+                'jack-robin': 'Dad-daughter adventures',
+                'robin-sandy': 'Best friends in chaos',
+                'jack-katherine-robin': 'The whole crew',
+                'jack-katherine-robin-sandy': 'All of us, all together',
+            };
+            return subtitles[key] || 'Celebrating every moment';
+        }
+
+        // =========================================================
+        //  REACT COMPONENTS
+        // =========================================================
+
+        const { useState, useEffect, useMemo } = React;
+
+        // --- Chip Bar ---
+        function ChipBar({ activeChips, onToggle }) {
+            return (
+                <div className="chip-bar">
+                    {PEOPLE.map(person => {
+                        const isActive = activeChips.has(person.id);
+                        return (
+                            <div
+                                key={person.id}
+                                className={`chip ${isActive ? '' : 'inactive'}`}
+                                style={isActive ? {
+                                    background: person.light,
+                                    borderColor: person.color,
+                                    color: person.color,
+                                } : {}}
+                                onClick={() => onToggle(person.id)}
+                            >
+                                <span className="chip-emoji">{person.emoji}</span>
+                                {person.name}
+                            </div>
+                        );
+                    })}
+                </div>
+            );
+        }
+
+        // --- Photo Header ---
+        function PhotoHeader({ activeChips }) {
+            const gradient = getHeaderGradient(activeChips);
+            const title = getHeaderTitle(activeChips);
+            const subtitle = getHeaderSubtitle(activeChips);
+
+            return (
+                <div className="photo-header">
+                    <div className="photo-gradient" style={{ background: gradient }}>
+                        <div>
+                            <div className="header-title">{title}</div>
+                            <div className="header-subtitle">{subtitle}</div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // --- Event Card ---
+        function EventCard({ event, style }) {
+            const days = getDaysFromNow(event.date);
+            const countdown = getCountdownText(days);
+            const isPast = days < 0;
+
+            return (
+                <div className={`event-card ${isPast ? 'past' : ''}`} style={style}>
+                    <div className="event-top">
+                        <div>
+                            <div className="event-title">{event.title}</div>
+                            <div className="event-date">{formatDate(event.date)}</div>
+                        </div>
+                        <span className={`event-countdown ${countdown.type}`}>
+                            {countdown.text}
+                        </span>
+                    </div>
+
+                    <div className="event-tags">
+                        {event.tags.map(tag => (
+                            <span
+                                key={tag}
+                                className="tag-pill"
+                                style={{
+                                    background: (TAG_COLORS[tag] || TAG_COLORS.memory).bg,
+                                    color: (TAG_COLORS[tag] || TAG_COLORS.memory).color,
+                                }}
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+
+                    <div className="people-dots">
+                        {event.people.map(pid => (
+                            <span
+                                key={pid}
+                                className="people-dot"
+                                style={{ background: getPersonColor(pid) }}
+                                title={PEOPLE.find(p => p.id === pid)?.name}
+                            />
+                        ))}
+                    </div>
+
+                    {event.notes && (
+                        <details className="event-notes">
+                            <summary>Notes</summary>
+                            <p>{event.notes}</p>
+                        </details>
+                    )}
+                </div>
+            );
+        }
+
+        // --- Event List ---
+        function EventList({ events }) {
+            const upcoming = events.filter(e => getDaysFromNow(e.date) >= 0)
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+            const past = events.filter(e => getDaysFromNow(e.date) < 0)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            return (
+                <div>
+                    {upcoming.length > 0 && (
+                        <>
+                            <div className="section-label">
+                                Upcoming <span className="count">{upcoming.length}</span>
+                            </div>
+                            {upcoming.map((event, i) => (
+                                <EventCard
+                                    key={event.id}
+                                    event={event}
+                                    style={{ animationDelay: `${i * 0.04}s` }}
+                                />
+                            ))}
+                        </>
+                    )}
+                    {past.length > 0 && (
+                        <>
+                            <div className="section-label">
+                                Memories <span className="count">{past.length}</span>
+                            </div>
+                            {past.map((event, i) => (
+                                <EventCard
+                                    key={event.id}
+                                    event={event}
+                                    style={{ animationDelay: `${i * 0.04}s` }}
+                                />
+                            ))}
+                        </>
+                    )}
+                    {events.length === 0 && (
+                        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
+                            Select a family member to see their moments
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // --- Pattern of the Day ---
+        function PatternOfTheDay({ showReflections, useCurated, onToggleReflections, onToggleCurated }) {
+            const seed = getDailyPatternSeed();
+            const pool = useCurated ? CURATED_PATTERNS : ALL_PATTERNS;
+            const keys = Object.keys(pool).map(Number);
+            const patternNum = keys[seed % keys.length];
+            const curated = CURATED_PATTERNS[patternNum];
+            const full = ALL_PATTERNS[patternNum];
+            const reflection = FAMILY_REFLECTIONS[patternNum];
+
+            const emoji = curated ? curated.emoji : '&#x2728;';
+            const name = full ? full.name : (curated ? curated.name : 'Unknown');
+            const description = full ? full.summary : '';
+
+            return (
+                <div className="pattern-card">
+                    <div className="pattern-badge">
+                        <span className="pattern-number">#{patternNum}</span>
+                        Pattern of the Day
+                    </div>
+                    <div className="pattern-name">
+                        {curated ? curated.emoji : '\u2728'} {name}
+                    </div>
+                    <div className="pattern-description">{description}</div>
+
+                    {showReflections && reflection && (
+                        <div className="pattern-reflection">
+                            <span className="reflection-label">Our Family</span>
+                            {reflection}
+                        </div>
+                    )}
+
+                    <div className="pattern-toggles">
+                        <div className="toggle-row">
+                            <div
+                                className={`toggle-switch ${showReflections ? 'on' : ''}`}
+                                onClick={onToggleReflections}
+                            />
+                            <span>Family Reflections</span>
+                        </div>
+                        <div className="toggle-row">
+                            <div
+                                className={`toggle-switch ${!useCurated ? 'on' : ''}`}
+                                onClick={onToggleCurated}
+                            />
+                            <span>Full Library</span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // --- App Root ---
+        function App() {
+            const [activeChips, setActiveChips] = useState(new Set(['robin']));
+            const [showReflections, setShowReflections] = useState(true);
+            const [useCurated, setUseCurated] = useState(true);
+
+            const toggleChip = (id) => {
+                setActiveChips(prev => {
+                    const next = new Set(prev);
+                    if (next.has(id)) {
+                        next.delete(id);
+                    } else {
+                        next.add(id);
+                    }
+                    return next;
+                });
+            };
+
+            // Union filter: show event if ANY of event.people matches ANY active chip
+            const filteredEvents = useMemo(() => {
+                if (activeChips.size === 0) return EVENTS;
+                return EVENTS.filter(event =>
+                    event.people.some(pid => activeChips.has(pid))
+                );
+            }, [activeChips]);
+
+            return (
+                <>
+                    <ChipBar activeChips={activeChips} onToggle={toggleChip} />
+                    <PhotoHeader activeChips={activeChips} />
+                    <EventList events={filteredEvents} />
+                    <PatternOfTheDay
+                        showReflections={showReflections}
+                        useCurated={useCurated}
+                        onToggleReflections={() => setShowReflections(!showReflections)}
+                        onToggleCurated={() => setUseCurated(!useCurated)}
+                    />
+                    <div className="footer">
+                        Made with <span className="heart">&hearts;</span> for the Reis family
+                    </div>
+                </>
+            );
+        }
+
+        // =========================================================
+        //  MOUNT
+        // =========================================================
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+
+    <!-- Password Logic (vanilla JS, runs before React) -->
+    <script>
+        const CORRECT_PASSWORD = "family2025";
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const errorMsg = document.getElementById('passwordError');
+
+            if (input.value === CORRECT_PASSWORD) {
+                document.getElementById('passwordScreen').classList.add('hidden');
+                document.getElementById('appContent').classList.add('unlocked');
+                sessionStorage.setItem('dashboardUnlocked', 'true');
+            } else {
+                errorMsg.classList.add('show');
+                input.style.animation = 'shake 0.4s ease';
+                setTimeout(() => {
+                    input.style.animation = '';
+                }, 400);
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // Auto-unlock if session still valid
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('passwordInput');
+            const submitBtn = document.getElementById('passwordSubmit');
+
+            submitBtn.addEventListener('click', checkPassword);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkPassword();
+            });
+
+            if (sessionStorage.getItem('dashboardUnlocked') === 'true') {
+                document.getElementById('passwordScreen').classList.add('hidden');
+                document.getElementById('appContent').classList.add('unlocked');
+            }
+        });
+    </script>
+</body>
+</html>
